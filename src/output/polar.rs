@@ -1,11 +1,10 @@
 use crate::shared::frame::Point;
-
-pub fn polar_from_xy(p: Point) -> Point {
+pub fn map_polar(p: Point) -> Point {
     let r = (p.x * p.x + p.y * p.y).sqrt();
-    let theta = p.y.atan2(p.x);
+    let t = p.y.atan2(p.x);
     Point {
-        x: r,
-        y: theta,
+        x: r * t.cos(),
+        y: r * t.sin(),
         intensity: p.intensity,
     }
 }

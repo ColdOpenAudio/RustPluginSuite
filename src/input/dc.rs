@@ -1,24 +1,18 @@
 #[derive(Debug, Clone)]
-pub struct DcEstimator {
+pub struct DcTracker {
     alpha: f32,
-    dc: f32,
+    mean: f32,
 }
 
-impl DcEstimator {
+impl DcTracker {
     pub fn new(alpha: f32) -> Self {
-        Self { alpha, dc: 0.0 }
+        Self { alpha, mean: 0.0 }
     }
-
-    pub fn update(&mut self, sample: f32) -> f32 {
-        self.dc += self.alpha * (sample - self.dc);
-        self.dc
+    pub fn update(&mut self, x: f32) -> f32 {
+        self.mean += self.alpha * (x - self.mean);
+        self.mean
     }
-
-    pub fn remove(&self, sample: f32) -> f32 {
-        sample - self.dc
-    }
-
-    pub fn value(&self) -> f32 {
-        self.dc
+    pub fn remove(&self, x: f32) -> f32 {
+        x - self.mean
     }
 }

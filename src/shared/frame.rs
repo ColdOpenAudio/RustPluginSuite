@@ -1,4 +1,4 @@
-#[derive(Debug, Clone, Copy, Default, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Default)]
 pub struct Frame {
     pub a: f32,
     pub b: f32,
@@ -7,7 +7,7 @@ pub struct Frame {
     pub dc_b: f32,
 }
 
-#[derive(Debug, Clone, Copy, Default, PartialEq)]
+#[derive(Debug, Clone, Copy, PartialEq, Default)]
 pub struct Point {
     pub x: f32,
     pub y: f32,

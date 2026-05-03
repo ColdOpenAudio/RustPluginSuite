@@ -3,11 +3,11 @@ use crate::{
     shared::frame::{Frame, Point},
 };
 
-pub fn map_mode(frame: &Frame, mode: ViewMode, intensity: f32) -> Vec<Point> {
+pub fn map_view(frame: Frame, mode: ViewMode, intensity: f32) -> Vec<Point> {
     let sum = frame.a + frame.b;
     let diff = frame.a - frame.b;
     match mode {
-        ViewMode::XY => vec![Point {
+        ViewMode::Xy => vec![Point {
             x: frame.a,
             y: frame.b,
             intensity,
