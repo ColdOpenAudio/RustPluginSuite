@@ -17,21 +17,6 @@ pub enum ChannelMode {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
-pub struct LookaheadParams {
-    pub enabled: bool,
-    pub time_ms: f32,
-}
-
-impl Default for LookaheadParams {
-    fn default() -> Self {
-        Self {
-            enabled: false,
-            time_ms: 0.0,
-        }
-    }
-}
-
-#[derive(Debug, Clone, PartialEq)]
 pub struct PluginParams {
     pub view_mode: ViewMode,
     pub channel_mode: ChannelMode,

@@ -1,4 +1,3 @@
-#[inline]
-pub fn lr_to_ms(left: f32, right: f32) -> (f32, f32) {
-    ((left + right) * 0.5, (left - right) * 0.5)
+pub fn lr_to_ms(l: f32, r: f32) -> (f32, f32) {
+    ((l + r) * 0.5, (l - r) * 0.5)
 }

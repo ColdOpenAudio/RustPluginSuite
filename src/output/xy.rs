@@ -1,9 +1,8 @@
 use crate::shared::frame::{Frame, Point};
-
-pub fn map_xy(frame: Frame, intensity: f32) -> Point {
+pub fn map_xy(f: Frame, intensity: f32) -> Point {
     Point {
-        x: frame.a,
-        y: frame.b,
+        x: f.a,
+        y: f.b,
         intensity,
     }
 }

@@ -1,29 +1,25 @@
+use crate::shared::frame::Frame;
 use std::collections::VecDeque;
 
-use crate::shared::frame::Frame;
-
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct FrameBuffer {
-    queue: VecDeque<Frame>,
+    q: VecDeque<Frame>,
     cap: usize,
 }
-
 impl FrameBuffer {
-    pub fn new(capacity: usize) -> Self {
+    pub fn new(cap: usize) -> Self {
         Self {
-            queue: VecDeque::with_capacity(capacity),
-            cap: capacity,
+            q: VecDeque::with_capacity(cap),
+            cap: cap.max(1),
         }
     }
-
-    pub fn push(&mut self, frame: Frame) {
-        if self.queue.len() == self.cap {
-            let _ = self.queue.pop_front();
+    pub fn push(&mut self, f: Frame) {
+        if self.q.len() == self.cap {
+            self.q.pop_front();
         }
-        self.queue.push_back(frame);
+        self.q.push_back(f);
     }
-
     pub fn pop(&mut self) -> Option<Frame> {
-        self.queue.pop_front()
+        self.q.pop_front()
     }
 }
