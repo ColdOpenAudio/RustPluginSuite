@@ -10,6 +10,8 @@ A production-ready, plug-and-play **NIH framework** for Rust plugin orchestratio
 - Dependency-aware execution with automatic topological ordering
 - Explicit error model for duplicate IDs, missing deps, cycles, validation, and execution failures
 - Configurable fail-fast behavior
+
+- Namespace-aware context helpers: `set_subkey`, `get_subkey`, `list_subkeys`, `remove_namespace`
 - Test coverage for ordering, dependency validation, and fail-fast semantics
 
 ## Installation
@@ -86,7 +88,7 @@ fn main() -> NihResult<()> {
 
 - `NihPlugin`: Trait all plugins implement
 - `PluginMetadata`: Plugin ID, version, dependencies, description
-- `PluginContext`: Shared mutable key/value state (String-based)
+- `PluginContext`: Shared mutable key/value state (String-based), including namespace-style subkeys (`section.key`)
 - `Framework`: Registry + dependency resolver + executor
 - `NihError`: Typed failure modes
 
@@ -105,3 +107,20 @@ cargo fmt
 cargo clippy --all-targets --all-features -- -D warnings
 cargo test
 ```
+
+## Sub-operators and Independent VST Targets
+
+The suite now supports organizing plugin families as independent sub-operators with
+individual VST descriptors. This lets you ship separate plugin identities (for
+example `oscilloscope`, `stereoscope`, `frequency_gate`, and `bass_go_brrr`) while
+reusing shared orchestration infrastructure.
+
+### Included operator templates
+
+- `OscilloscopeOperator`
+- `StereoscopeOperator`
+- `FrequencyGateOperator`
+- `BassGoBrrrOperator`
+
+Use `OperatorSuite` to register operators, export their `VstDescriptor`s, and
+execute their processing hooks against a shared `PluginContext`.

@@ -31,9 +31,15 @@
 pub mod context;
 pub mod error;
 pub mod framework;
+pub mod operators;
 pub mod plugin;
 
 pub use context::PluginContext;
 pub use error::{NihError, NihResult};
 pub use framework::{Framework, FrameworkBuilder, FrameworkReport};
 pub use plugin::{NihPlugin, PluginMetadata};
+
+pub use operators::{
+    BassGoBrrrOperator, FrequencyGateOperator, OperatorSuite, OscilloscopeOperator,
+    StereoscopeOperator, SubOperator, VstDescriptor,
+};
