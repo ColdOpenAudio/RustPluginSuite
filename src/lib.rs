@@ -1,8 +1,12 @@
 pub mod context;
 pub mod error;
 pub mod framework;
+pub mod input;
 pub mod operators;
+pub mod output;
+pub mod params;
 pub mod plugin;
+pub mod shared;
 
 pub mod params;
 pub mod input {
