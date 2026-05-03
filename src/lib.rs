@@ -1,38 +1,12 @@
-//! # RustPluginSuite
-//!
-//! A plug-and-play **NIH framework** ("Not Invented Here") for building
-//! composable plugin pipelines in Rust with strong typing, validation, and
-//! execution lifecycle hooks.
-//!
-//! ## Quick start
-//! ```
-//! use rust_plugin_suite::{Framework, NihPlugin, NihResult, PluginContext};
-//!
-//! #[derive(Default)]
-//! struct AddGreeting;
-//!
-//! impl NihPlugin for AddGreeting {
-//!     fn id(&self) -> &'static str { "add_greeting" }
-//!
-//!     fn run(&self, ctx: &mut PluginContext) -> NihResult<()> {
-//!         ctx.set("greeting", "hello");
-//!         Ok(())
-//!     }
-//! }
-//!
-//! let mut framework = Framework::builder().build();
-//! framework.register(AddGreeting::default()).unwrap();
-//!
-//! let mut ctx = PluginContext::new();
-//! framework.execute(&mut ctx).unwrap();
-//! assert_eq!(ctx.get_string("greeting"), Some("hello"));
-//! ```
-
 pub mod context;
 pub mod error;
 pub mod framework;
+pub mod input;
 pub mod operators;
+pub mod output;
+pub mod params;
 pub mod plugin;
+pub mod shared;
 
 pub use context::PluginContext;
 pub use error::{NihError, NihResult};
@@ -43,3 +17,47 @@ pub use operators::{
     BassGoBrrrOperator, FrequencyGateOperator, OperatorSuite, OscilloscopeOperator,
     StereoscopeOperator, SubOperator, VstDescriptor,
 };
+
+#[cfg(test)]
+mod tests {
+    use crate::{
+        input::process::InputProcessor,
+        output::renderer::Renderer,
+        params::{ChannelMode, PluginParams, ViewMode},
+    };
+
+    #[test]
+    fn processes_ms_and_maps_sum_diff() {
+        let mut p = PluginParams {
+            channel_mode: ChannelMode::Ms,
+            ..Default::default()
+        };
+        let mut input = InputProcessor::new(48_000.0, 50.0, 64);
+        let frame = input.process_sample(1.0, -1.0, &p);
+        assert!((frame.a - 0.0).abs() < 1e-6);
+        assert!((frame.b - 1.0).abs() < 1e-6);
+
+        let renderer = Renderer {
+            noise_threshold: 0.0,
+            attenuation: 0.25,
+        };
+        let pts = renderer.render(frame, ViewMode::SumDiff);
+        assert_eq!(pts.len(), 1);
+        assert!((pts[0].x - 1.0).abs() < 1e-6);
+        assert!((pts[0].y + 1.0).abs() < 1e-6);
+
+        p.view_mode = ViewMode::Polar;
+        let polar = renderer.render(frame, p.view_mode);
+        assert_eq!(polar.len(), 1);
+        assert!(polar[0].x >= 0.0);
+    }
+
+    #[test]
+    fn lookahead_disabled_has_zero_latency() {
+        let p = PluginParams::default();
+        let mut input = InputProcessor::new(48_000.0, 100.0, 64);
+        let frame = input.process_sample(0.25, -0.5, &p);
+        assert!((frame.a - 0.25).abs() < 1e-6);
+        assert!((frame.b + 0.5).abs() < 1e-6);
+    }
+}
