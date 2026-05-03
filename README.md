@@ -1,126 +1,53 @@
-# RustPluginSuite
+# RustPluginSuite — Phase 1 Stereo/M-S Oscilloscope Core
 
-A production-ready, plug-and-play **NIH framework** for Rust plugin orchestration.
+This repository now includes a realtime-safe oscilloscope processing/rendering core organized around strict input/output scope separation.
 
-> NIH here stands for **Not Invented Here**: you can drop in your own plugins, preserve full control, and avoid heavy external orchestration dependencies.
+## Implemented Phase 1 Surface
 
-## Features
+- Stereo L/R input processing
+- M/S transform support (`M=(L+R)*0.5`, `S=(L-R)*0.5`)
+- View modes: `XY`, `POLAR`, `SUM_DIFF`, `LISS_SUM`, `DIFF_ONLY`, `DUAL_TRACE`
+- RMS windowed energy metric (fixed-size ring)
+- DC tracking and optional DC removal
+- Passive lookahead infrastructure (disabled by default)
+- Frame contract (`Frame`) from input scope to output scope
+- Point contract (`Point`) for renderer consumption
 
-- Typed plugin interface with lifecycle hooks (`validate`, `run`)
-- Dependency-aware execution with automatic topological ordering
-- Explicit error model for duplicate IDs, missing deps, cycles, validation, and execution failures
-- Configurable fail-fast behavior
+## Module Layout
 
-- Namespace-aware context helpers: `set_subkey`, `get_subkey`, `list_subkeys`, `remove_namespace`
-- Test coverage for ordering, dependency validation, and fail-fast semantics
-
-## Installation
-
-```bash
-cargo add rust_plugin_suite
+```text
+src/
+  lib.rs
+  params.rs
+  input/
+    process.rs
+    lookahead.rs
+    dc.rs
+    rms.rs
+    ms.rs
+    buffer.rs
+  output/
+    xy.rs
+    polar.rs
+    sl_modes.rs
+    renderer.rs
+    view.rs
+  shared/
+    frame.rs
 ```
 
-(For local use in this repository, run `cargo build`.)
+## Realtime Safety Notes
 
-## Quick Start
+- Input thread does no per-sample allocation; buffers are preallocated during setup.
+- Lookahead uses fixed storage and is pass-through when disabled.
+- Output view mapping is DSP-free and visualization-only.
+- Noise threshold modifies point intensity only (no sample gating).
 
-```rust
-use rust_plugin_suite::{Framework, NihPlugin, NihResult, PluginContext, PluginMetadata};
+## Validation
 
-struct Bootstrap;
-impl NihPlugin for Bootstrap {
-    fn id(&self) -> &'static str { "bootstrap" }
-
-    fn metadata(&self) -> PluginMetadata {
-        PluginMetadata::new(self.id())
-            .with_version("1.0.0")
-            .with_description("Bootstraps app state")
-    }
-
-    fn run(&self, ctx: &mut PluginContext) -> NihResult<()> {
-        ctx.set("app.ready", "true");
-        Ok(())
-    }
-}
-
-struct Feature;
-impl NihPlugin for Feature {
-    fn id(&self) -> &'static str { "feature" }
-
-    fn metadata(&self) -> PluginMetadata {
-        PluginMetadata::new(self.id())
-            .with_dependencies(vec!["bootstrap"])
-    }
-
-    fn validate(&self, ctx: &PluginContext) -> NihResult<()> {
-        if ctx.get_string("app.ready") != Some("true") {
-            return Err(rust_plugin_suite::NihError::ValidationFailed {
-                plugin_id: self.id().to_string(),
-                reason: "app not ready".to_string(),
-            });
-        }
-        Ok(())
-    }
-
-    fn run(&self, ctx: &mut PluginContext) -> NihResult<()> {
-        ctx.set("feature.enabled", "true");
-        Ok(())
-    }
-}
-
-fn main() -> NihResult<()> {
-    let mut framework = Framework::builder().fail_fast(true).build();
-    framework.register(Bootstrap)?;
-    framework.register(Feature)?;
-
-    let mut ctx = PluginContext::new();
-    let report = framework.execute(&mut ctx)?;
-
-    assert_eq!(report.execution_order, vec!["bootstrap", "feature"]);
-    assert_eq!(ctx.get_string("feature.enabled"), Some("true"));
-    Ok(())
-}
-```
-
-## Architecture
-
-### Core types
-
-- `NihPlugin`: Trait all plugins implement
-- `PluginMetadata`: Plugin ID, version, dependencies, description
-- `PluginContext`: Shared mutable key/value state (String-based), including namespace-style subkeys (`section.key`)
-- `Framework`: Registry + dependency resolver + executor
-- `NihError`: Typed failure modes
-
-### Execution flow
-
-1. Register plugins by unique ID
-2. Resolve dependency graph
-3. Validate each plugin
-4. Run each plugin in dependency order
-5. Return `FrameworkReport` with execution order
-
-## Development
+Run:
 
 ```bash
 cargo fmt
-cargo clippy --all-targets --all-features -- -D warnings
 cargo test
 ```
-
-## Sub-operators and Independent VST Targets
-
-The suite now supports organizing plugin families as independent sub-operators with
-individual VST descriptors. This lets you ship separate plugin identities (for
-example `oscilloscope`, `stereoscope`, `frequency_gate`, and `bass_go_brrr`) while
-reusing shared orchestration infrastructure.
-
-### Included operator templates
-
-- `OscilloscopeOperator`
-- `StereoscopeOperator`
-- `FrequencyGateOperator`
-- `BassGoBrrrOperator`
-
-Use `OperatorSuite` to register operators, export their `VstDescriptor`s, and
-execute their processing hooks against a shared `PluginContext`.
