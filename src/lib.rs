@@ -13,8 +13,8 @@ pub use error::{NihError, NihResult};
 pub use framework::{Framework, FrameworkBuilder, FrameworkReport};
 pub use input::process::InputProcessor;
 pub use operators::{
-    BassGoBrrrOperator, FrequencyGateOperator, OperatorSuite, OscilloscopeOperator,
-    StereoscopeOperator, SubOperator, VstDescriptor,
+    BassGoBrrrOperator, FrequencyGateOperator, OperatorSuite, OscilloscopeOperator, PFGAOperator,
+    StereoscopeOperator, SubOperator, VstDescriptor, default_operator_suite,
 };
 pub use params::{ChannelMode, PluginParams, ViewMode};
 pub use plugin::{NihPlugin, PluginMetadata};

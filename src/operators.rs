@@ -78,6 +78,16 @@ impl OperatorSuite {
     }
 }
 
+pub fn default_operator_suite() -> NihResult<OperatorSuite> {
+    let mut suite = OperatorSuite::new();
+    suite.register(OscilloscopeOperator)?;
+    suite.register(StereoscopeOperator)?;
+    suite.register(FrequencyGateOperator)?;
+    suite.register(PFGAOperator)?;
+    suite.register(BassGoBrrrOperator)?;
+    Ok(suite)
+}
+
 #[derive(Default)]
 pub struct OscilloscopeOperator;
 
@@ -222,12 +232,7 @@ mod tests {
 
     #[test]
     fn suite_runs_all_operators_and_records_state() {
-        let mut suite = OperatorSuite::new();
-        suite.register(OscilloscopeOperator).unwrap();
-        suite.register(StereoscopeOperator).unwrap();
-        suite.register(FrequencyGateOperator).unwrap();
-        suite.register(BassGoBrrrOperator).unwrap();
-        suite.register(PFGAOperator).unwrap();
+        let suite = default_operator_suite().unwrap();
 
         let mut ctx = PluginContext::new();
         suite.run_all(&mut ctx).unwrap();
@@ -257,6 +262,23 @@ mod tests {
         assert_eq!(
             ctx.get_subkey("operators.pfga", "capture_policy"),
             Some("resample_working_master_final")
+        );
+    }
+
+    #[test]
+    fn default_suite_contains_all_supported_sub_operators() {
+        let suite = default_operator_suite().unwrap();
+        let ids: Vec<&str> = suite.descriptors().iter().map(|d| d.plugin_id).collect();
+
+        assert_eq!(
+            ids,
+            vec![
+                "oscilloscope",
+                "stereoscope",
+                "frequency_gate",
+                "pfga",
+                "bass_go_brrr"
+            ]
         );
     }
 }

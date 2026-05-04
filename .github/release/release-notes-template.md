@@ -2,7 +2,7 @@
 
 This release includes:
 
-- Windows auto-installation wrapper (`install-windows.bat` + `install-windows.ps1`)
+- Windows auto-installation wrapper (`install-windows.bat` + `install-windows-bootstrap.ps1` + `install-windows.ps1`)
 - Windows installation/operations guide
 - Release archives (`.zip` and `.tar.gz`) and SHA-256 checksums
 
