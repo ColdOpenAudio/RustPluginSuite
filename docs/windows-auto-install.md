@@ -6,6 +6,8 @@ RustPluginSuite now includes a production-oriented Windows installation wrapper.
 
 - `scripts/install-windows.bat` — thin launcher for users who double-click a batch file.
 - `scripts/install-windows.ps1` — full installer logic.
+- `scripts/setup/install-git-windows.ps1` — standalone Git installer helper.
+- `scripts/setup/install-rust-windows.ps1` — standalone Rust installer helper.
 
 ## What the installer does
 
@@ -13,9 +15,10 @@ RustPluginSuite now includes a production-oriented Windows installation wrapper.
 2. Ensures Rust is installed (prefers `winget`, then `choco`, then direct `rustup-init.exe`).
 3. Pins/initializes stable toolchain.
 4. Runs quality gates:
-   - `cargo fmt -- --check`
-   - `cargo test`
-5. Builds release artifacts (`cargo build --release`) unless `-SkipBuild` is passed.
+   - `cargo fmt --all -- --check`
+   - `cargo clippy --all-targets --all-features -- -D warnings`
+   - `cargo test --all-targets --all-features`
+5. Builds release artifacts (`cargo build --release --all-targets`) unless `-SkipBuild` is passed.
 6. Deploys output and metadata to install directory (default: `C:\Program Files\RustPluginSuite`).
 
 ## Usage
@@ -57,3 +60,6 @@ The installer writes the following into the destination directory:
 - Running under elevated PowerShell is recommended for writes to `C:\Program Files`.
 - Installer is idempotent and safe to rerun.
 - The wrapper intentionally fails fast when prerequisite checks or test/build steps fail.
+- Command sheets are available at:
+  - `docs/command-sheets/git-commands.md`
+  - `docs/command-sheets/rust-install-commands.md`

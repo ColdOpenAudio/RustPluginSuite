@@ -52,6 +52,30 @@ cargo fmt
 cargo test
 ```
 
+## Included Sub-Operators
+
+The suite ships with five included sub-operators and each one has a distinct functional role:
+
+- Oscilloscope (`oscilloscope`) — analyzer waveform visibility
+- Stereoscope (`stereoscope`) — stereo image visibility
+- Frequency Gate (`frequency_gate`) — dynamics gating path
+- Pitch/Frequency Gate Amp (`pfga`) — hybrid dynamics/validation path
+- Bass Go Brrr (`bass_go_brrr`) — bass enhancement path
+
+See `docs/sub-operators.md` for the detailed capability matrix and runtime signals.
+
+## Release = Compile, Test, and Package
+
+When the instruction is **release**, run:
+
+```bash
+bash scripts/release/release-gate.sh
+```
+
+This enforces formatting, linting, full tests, release compilation, and artifact packaging in a single command.
+
+See `docs/release-process.md` for policy and workflow details.
+
 ## Windows Auto-Install Wrapper
 
 A complete Windows installer wrapper is available for one-command setup, validation, build, and deployment:
@@ -60,6 +84,11 @@ A complete Windows installer wrapper is available for one-command setup, validat
 - `scripts\install-windows.ps1` (full installer)
 
 See `docs/windows-auto-install.md` for full usage and operational details.
+
+## Git + Rust Command Sheets
+
+- `docs/command-sheets/git-commands.md`
+- `docs/command-sheets/rust-install-commands.md`
 
 ## PFGA (Pitch/Frequency Gate Amp) System Spec
 
