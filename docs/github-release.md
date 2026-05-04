@@ -11,8 +11,9 @@ Workflow: `.github/workflows/release.yml`
 ## Pipeline stages
 
 1. **Test matrix** (`ubuntu-latest`, `windows-latest`)
-   - `cargo fmt -- --check`
-   - `cargo test --all-targets`
+   - `cargo fmt --all -- --check`
+   - `cargo clippy --all-targets --all-features -- -D warnings`
+   - `cargo test --all-targets --all-features`
 2. **Package** (`ubuntu-latest`)
    - runs `scripts/release/package-release.sh`
    - uploads generated files from `dist/`
@@ -25,8 +26,14 @@ Workflow: `.github/workflows/release.yml`
 
 Generated bundle includes:
 
+- `Cargo.toml`
+- `Cargo.lock`
 - `README.md`
-- `docs/windows-auto-install.md`
+- `docs/`
+- `scripts/`
+- `src/`
+- `tests/`
+- `windows-installer/install-windows-bootstrap.ps1`
 - `windows-installer/install-windows.ps1`
 - `windows-installer/install-windows.bat`
 - `RELEASE-MANIFEST.txt`

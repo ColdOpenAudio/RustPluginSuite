@@ -22,6 +22,22 @@ function Ensure-Command([string]$Name, [string]$InstallHint) {
     return $command.Source
 }
 
+function Add-KnownToolPaths {
+    $paths = @(
+        "$env:ProgramFiles\Git\cmd",
+        "$env:ProgramFiles\Git\bin",
+        "${env:ProgramFiles(x86)}\Git\cmd",
+        "${env:ProgramFiles(x86)}\Git\bin",
+        (Join-Path $env:USERPROFILE ".cargo\bin")
+    )
+
+    foreach ($path in $paths) {
+        if ($path -and (Test-Path $path) -and ($env:PATH -notlike "*$path*")) {
+            $env:PATH = "$path;$env:PATH"
+        }
+    }
+}
+
 function Find-Pwsh {
     $command = Get-Command "pwsh" -ErrorAction SilentlyContinue
     if ($command) {
@@ -81,37 +97,38 @@ function Ensure-Rust {
         return
     }
 
+    $rustSetup = Join-Path $repoRoot "scripts\setup\install-rust-windows.ps1"
+    if (-not (Test-Path $rustSetup)) {
+        throw "Rust setup helper was not found: $rustSetup"
+    }
+
     Write-Section "Installing Rust toolchain"
-
-    if (-not $ForceRustup) {
-        if (Get-Command "winget" -ErrorAction SilentlyContinue) {
-            Write-Host "Installing Rust via winget..."
-            winget install -e --id Rustlang.Rustup --accept-source-agreements --accept-package-agreements
-            if (Get-Command "rustup" -ErrorAction SilentlyContinue) {
-                return
-            }
-        }
-
-        if (Get-Command "choco" -ErrorAction SilentlyContinue) {
-            Write-Host "Installing Rust via Chocolatey..."
-            choco install rustup.install -y
-            if (Get-Command "rustup" -ErrorAction SilentlyContinue) {
-                return
-            }
-        }
+    $arguments = @()
+    if ($ForceRustup) {
+        $arguments += "-ForceRustup"
     }
-
-    Write-Host "Installing Rust via official rustup-init.exe..."
-    $tmp = Join-Path $env:TEMP "rustup-init.exe"
-    Invoke-WebRequest -Uri "https://win.rustup.rs/x86_64" -OutFile $tmp
-    Start-Process -FilePath $tmp -ArgumentList "-y" -Wait -NoNewWindow
-
-    $cargoBin = Join-Path $env:USERPROFILE ".cargo\bin"
-    if (Test-Path $cargoBin) {
-        $env:PATH = "$cargoBin;$env:PATH"
-    }
+    Invoke-Script $pwsh $rustSetup $arguments
+    Add-KnownToolPaths
 
     Ensure-Command "rustup" "Install from https://rustup.rs and rerun this script." | Out-Null
+}
+
+function Ensure-Git {
+    if (Get-Command "git" -ErrorAction SilentlyContinue) {
+        Write-Host "git found."
+        return
+    }
+
+    $gitSetup = Join-Path $repoRoot "scripts\setup\install-git-windows.ps1"
+    if (-not (Test-Path $gitSetup)) {
+        throw "Git setup helper was not found: $gitSetup"
+    }
+
+    Write-Section "Installing Git"
+    Invoke-Script $pwsh $gitSetup @()
+    Add-KnownToolPaths
+
+    Ensure-Command "git" "Install Git for Windows: https://git-scm.com/download/win" | Out-Null
 }
 
 function Invoke-Script([string]$PowerShellPath, [string]$ScriptPath, [string[]]$ScriptArguments) {
@@ -156,9 +173,11 @@ function New-InstallerArguments {
 }
 
 $scriptRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
+$repoRoot = (Resolve-Path (Join-Path $scriptRoot "..")).Path
 $installer = Join-Path $scriptRoot "install-windows.ps1"
 
 Write-Section "Preparing Windows host"
+Add-KnownToolPaths
 $pwsh = Ensure-PowerShellCore
 
 if (-not $UseCurrentPowerShell -and $PSVersionTable.PSEdition -ne "Core") {
@@ -167,7 +186,7 @@ if (-not $UseCurrentPowerShell -and $PSVersionTable.PSEdition -ne "Core") {
     exit 0
 }
 
-Ensure-Command "git" "Install Git for Windows: https://git-scm.com/download/win" | Out-Null
+Ensure-Git
 Ensure-Rust
 
 Write-Section "Verifying Rust toolchain"

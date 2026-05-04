@@ -27,9 +27,9 @@ fn powershell_bootstrap_contains_rust_bootstrap_paths() {
     let script = fs::read_to_string("scripts/install-windows-bootstrap.ps1")
         .expect("expected scripts/install-windows-bootstrap.ps1 to exist");
 
-    assert!(script.contains("winget install -e --id Rustlang.Rustup"));
-    assert!(script.contains("choco install rustup.install -y"));
-    assert!(script.contains("https://win.rustup.rs/x86_64"));
+    assert!(script.contains("scripts\\setup\\install-rust-windows.ps1"));
+    assert!(script.contains("scripts\\setup\\install-git-windows.ps1"));
+    assert!(script.contains("Add-KnownToolPaths"));
 }
 
 #[test]
@@ -49,7 +49,19 @@ fn release_package_includes_windows_bootstrap() {
     let script = fs::read_to_string("scripts/release/package-release.sh")
         .expect("expected scripts/release/package-release.sh to exist");
 
+    assert!(script.contains("Cargo.toml"));
+    assert!(script.contains("Cargo.lock"));
+    assert!(script.contains("cp -R \"$ROOT_DIR/src\""));
+    assert!(script.contains("cp -R \"$ROOT_DIR/tests\""));
     assert!(script.contains("install-windows-bootstrap.ps1"));
+}
+
+#[test]
+fn crate_builds_dynamic_library_for_windows_deployment() {
+    let manifest = fs::read_to_string("Cargo.toml").expect("expected Cargo.toml to exist");
+
+    assert!(manifest.contains("crate-type"));
+    assert!(manifest.contains("cdylib"));
 }
 
 #[test]

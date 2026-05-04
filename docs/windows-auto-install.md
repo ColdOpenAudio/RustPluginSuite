@@ -56,7 +56,7 @@ This document describes the Windows installer as an execution topology (entry po
 
 ### Stage C — Rust Toolchain Acquisition (Fallback Ladder)
 
-If Rust is missing, the bootstrap traverses a strict fallback chain:
+If Rust is missing, the bootstrap delegates to `scripts\setup\install-rust-windows.ps1`, which traverses a strict fallback chain:
 
 1. Attempt installation via **`winget`**.
 2. If unavailable/failing, attempt via **Chocolatey (`choco`)**.
@@ -94,6 +94,8 @@ The product installer runs in repository root, through a deterministic process r
 4. Generate `install-manifest.json` with deployment metadata and timestamp.
 
 **Output invariant:** install directory becomes a self-describing runtime package containing binaries and manifest metadata.
+
+**Failure invariant:** a default build must produce at least one Windows `.dll`; otherwise deployment fails instead of writing a misleading manifest-only install.
 
 ## 3) Data/Artifact Flow Map
 
@@ -145,14 +147,30 @@ The installer intentionally hard-stops on:
 
 ### 5.1 Explorer / CMD Mode
 
+From a repository checkout:
+
 ```bat
 scripts\install-windows.bat
 ```
 
+From an extracted release bundle:
+
+```bat
+windows-installer\install-windows.bat
+```
+
 ### 5.2 PowerShell Default Install
+
+From a repository checkout:
 
 ```powershell
 .\scripts\install-windows-bootstrap.ps1
+```
+
+From an extracted release bundle:
+
+```powershell
+.\windows-installer\install-windows-bootstrap.ps1
 ```
 
 ### 5.3 PowerShell Custom Destination

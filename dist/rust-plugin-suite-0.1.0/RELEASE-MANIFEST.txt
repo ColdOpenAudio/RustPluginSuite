@@ -1,9 +1,0 @@
-Package: rust-plugin-suite
-Version: v0.1.0
-Generated: 2026-05-04T15:06:06Z
-Contents:
-- README.md
-- windows-auto-install.md
-- windows-installer/install-windows-bootstrap.ps1
-- windows-installer/install-windows.ps1
-- windows-installer/install-windows.bat

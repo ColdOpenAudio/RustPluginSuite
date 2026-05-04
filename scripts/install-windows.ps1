@@ -53,7 +53,12 @@ New-Item -ItemType Directory -Path $InstallDir -Force | Out-Null
 Copy-Item -Path (Join-Path $repoRoot "README.md") -Destination $InstallDir -Force
 if (-not $SkipBuild) {
     $releaseDir = Join-Path $repoRoot "target\release"
-    Get-ChildItem -Path $releaseDir -Filter "*.dll" -ErrorAction SilentlyContinue | ForEach-Object {
+    $artifacts = @(Get-ChildItem -Path $releaseDir -Filter "*.dll" -ErrorAction SilentlyContinue)
+    if ($artifacts.Count -eq 0) {
+        throw "No Windows DLL artifacts were found in $releaseDir after release build."
+    }
+
+    $artifacts | ForEach-Object {
         Copy-Item -Path $_.FullName -Destination $InstallDir -Force
     }
 }

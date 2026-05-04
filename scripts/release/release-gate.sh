@@ -14,7 +14,7 @@ run_step() {
 run_step "Formatting check" cargo fmt --all -- --check
 run_step "Lint (warnings denied)" cargo clippy --all-targets --all-features -- -D warnings
 run_step "Tests" cargo test --all-targets --all-features
-run_step "Release build" cargo build --release
+run_step "Release build" cargo build --release --all-targets
 run_step "Release packaging" bash "$ROOT_DIR/scripts/release/package-release.sh"
 
 echo ""

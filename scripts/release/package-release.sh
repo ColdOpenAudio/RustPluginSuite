@@ -21,8 +21,13 @@ WINDOWS_SUBDIR="$BUNDLE_ROOT/windows-installer"
 rm -rf "$DIST_DIR"
 mkdir -p "$WINDOWS_SUBDIR"
 
+cp "$ROOT_DIR/Cargo.toml" "$BUNDLE_ROOT/"
+cp "$ROOT_DIR/Cargo.lock" "$BUNDLE_ROOT/"
 cp "$ROOT_DIR/README.md" "$BUNDLE_ROOT/"
-cp "$ROOT_DIR/docs/windows-auto-install.md" "$BUNDLE_ROOT/"
+cp -R "$ROOT_DIR/docs" "$BUNDLE_ROOT/"
+cp -R "$ROOT_DIR/src" "$BUNDLE_ROOT/"
+cp -R "$ROOT_DIR/tests" "$BUNDLE_ROOT/"
+cp -R "$ROOT_DIR/scripts" "$BUNDLE_ROOT/"
 cp "$ROOT_DIR/scripts/install-windows-bootstrap.ps1" "$WINDOWS_SUBDIR/"
 cp "$ROOT_DIR/scripts/install-windows.ps1" "$WINDOWS_SUBDIR/"
 cp "$ROOT_DIR/scripts/install-windows.bat" "$WINDOWS_SUBDIR/"
@@ -32,8 +37,13 @@ Package: ${PKG_NAME}
 Version: ${VERSION}
 Generated: $(date -u +"%Y-%m-%dT%H:%M:%SZ")
 Contents:
+- Cargo.toml
+- Cargo.lock
 - README.md
-- windows-auto-install.md
+- docs/
+- scripts/
+- src/
+- tests/
 - windows-installer/install-windows-bootstrap.ps1
 - windows-installer/install-windows.ps1
 - windows-installer/install-windows.bat

@@ -19,8 +19,10 @@ This command performs, in order:
 1. `cargo fmt --all -- --check`
 2. `cargo clippy --all-targets --all-features -- -D warnings`
 3. `cargo test --all-targets --all-features`
-4. `cargo build --release`
+4. `cargo build --release --all-targets`
 5. `bash scripts/release/package-release.sh`
+
+Generated release archives are written to `dist/`. That directory is intentionally ignored by git because manifests and checksums contain generation-time data.
 
 ## Why this process speeds up larger features
 
