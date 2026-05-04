@@ -8,48 +8,6 @@ pub mod params;
 pub mod plugin;
 pub mod shared;
 
-pub mod params;
-pub mod input {
-    pub mod buffer;
-    pub mod dc;
-    pub mod lookahead;
-    pub mod ms;
-    pub mod process;
-    pub mod rms;
-}
-pub mod output {
-    pub mod polar;
-    pub mod renderer;
-    pub mod sl_modes;
-    pub mod view;
-    pub mod xy;
-}
-pub mod shared {
-    pub mod frame;
-}
-
-pub mod input {
-    pub mod buffer;
-    pub mod dc;
-    pub mod lookahead;
-    pub mod ms;
-    pub mod process;
-    pub mod rms;
-}
-
-pub mod output {
-    pub mod polar;
-    pub mod renderer;
-    pub mod sl_modes;
-    pub mod view;
-    pub mod xy;
-}
-
-pub mod params;
-pub mod shared {
-    pub mod frame;
-}
-
 pub use context::PluginContext;
 pub use error::{NihError, NihResult};
 pub use framework::{Framework, FrameworkBuilder, FrameworkReport};
