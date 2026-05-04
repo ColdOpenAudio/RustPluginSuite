@@ -52,6 +52,18 @@ cargo fmt
 cargo test
 ```
 
+## Release = Compile, Test, and Package
+
+When the instruction is **release**, run:
+
+```bash
+bash scripts/release/release-gate.sh
+```
+
+This enforces formatting, linting, full tests, release compilation, and artifact packaging in a single command.
+
+See `docs/release-process.md` for policy and workflow details.
+
 ## Windows Auto-Install Wrapper
 
 A complete Windows installer wrapper is available for one-command setup, validation, build, and deployment:

@@ -5,9 +5,10 @@ fn powershell_installer_contains_required_quality_gates() {
     let script = fs::read_to_string("scripts/install-windows.ps1")
         .expect("expected scripts/install-windows.ps1 to exist");
 
-    assert!(script.contains("cargo fmt -- --check"));
-    assert!(script.contains("cargo test"));
-    assert!(script.contains("cargo build --release"));
+    assert!(script.contains("fmt --all -- --check"));
+    assert!(script.contains("clippy --all-targets --all-features -- -D warnings"));
+    assert!(script.contains("test --all-targets --all-features"));
+    assert!(script.contains("build --release --all-targets"));
 }
 
 #[test]
