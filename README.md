@@ -51,3 +51,12 @@ Run:
 cargo fmt
 cargo test
 ```
+
+## Windows Auto-Install Wrapper
+
+A complete Windows installer wrapper is available for one-command setup, validation, build, and deployment:
+
+- `scripts\install-windows.bat` (double-click/CMD entrypoint)
+- `scripts\install-windows.ps1` (full installer)
+
+See `docs/windows-auto-install.md` for full usage and operational details.
