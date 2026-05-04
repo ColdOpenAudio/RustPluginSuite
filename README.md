@@ -52,18 +52,6 @@ cargo fmt
 cargo test
 ```
 
-## Included Sub-Operators
-
-The suite ships with five included sub-operators and each one has a distinct functional role:
-
-- Oscilloscope (`oscilloscope`) — analyzer waveform visibility
-- Stereoscope (`stereoscope`) — stereo image visibility
-- Frequency Gate (`frequency_gate`) — dynamics gating path
-- Pitch/Frequency Gate Amp (`pfga`) — hybrid dynamics/validation path
-- Bass Go Brrr (`bass_go_brrr`) — bass enhancement path
-
-See `docs/sub-operators.md` for the detailed capability matrix and runtime signals.
-
 ## Release = Compile, Test, and Package
 
 When the instruction is **release**, run:
