@@ -12,9 +12,20 @@ fn powershell_installer_contains_required_quality_gates() {
 }
 
 #[test]
-fn powershell_installer_contains_rust_bootstrap_paths() {
-    let script = fs::read_to_string("scripts/install-windows.ps1")
-        .expect("expected scripts/install-windows.ps1 to exist");
+fn powershell_bootstrap_contains_powershell_core_ladder() {
+    let script = fs::read_to_string("scripts/install-windows-bootstrap.ps1")
+        .expect("expected scripts/install-windows-bootstrap.ps1 to exist");
+
+    assert!(script.contains("Microsoft.PowerShell"));
+    assert!(script.contains("powershell-core"));
+    assert!(script.contains("PowerShell\\7\\pwsh.exe"));
+    assert!(script.contains("Re-entering bootstrap under PowerShell 7"));
+}
+
+#[test]
+fn powershell_bootstrap_contains_rust_bootstrap_paths() {
+    let script = fs::read_to_string("scripts/install-windows-bootstrap.ps1")
+        .expect("expected scripts/install-windows-bootstrap.ps1 to exist");
 
     assert!(script.contains("winget install -e --id Rustlang.Rustup"));
     assert!(script.contains("choco install rustup.install -y"));
@@ -26,8 +37,19 @@ fn batch_wrapper_invokes_powershell_installer() {
     let script = fs::read_to_string("scripts/install-windows.bat")
         .expect("expected scripts/install-windows.bat to exist");
 
+    assert!(script.contains("where pwsh"));
+    assert!(script.contains("where powershell"));
+    assert!(script.contains("winget install --id Microsoft.PowerShell"));
+    assert!(script.contains("install-windows-bootstrap.ps1"));
     assert!(script.contains("ExecutionPolicy Bypass"));
-    assert!(script.contains("install-windows.ps1"));
+}
+
+#[test]
+fn release_package_includes_windows_bootstrap() {
+    let script = fs::read_to_string("scripts/release/package-release.sh")
+        .expect("expected scripts/release/package-release.sh to exist");
+
+    assert!(script.contains("install-windows-bootstrap.ps1"));
 }
 
 #[test]
