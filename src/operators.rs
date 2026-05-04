@@ -145,6 +145,35 @@ impl SubOperator for FrequencyGateOperator {
 }
 
 #[derive(Default)]
+pub struct PFGAOperator;
+
+impl SubOperator for PFGAOperator {
+    fn key(&self) -> &'static str {
+        "pfga"
+    }
+
+    fn display_name(&self) -> &'static str {
+        "Pitch/Frequency Gate Amp"
+    }
+
+    fn category(&self) -> &'static str {
+        "Dynamics"
+    }
+
+    fn process(&self, ctx: &mut PluginContext) -> NihResult<()> {
+        ctx.set_subkey("operators.pfga", "enabled", "true");
+        ctx.set_subkey("operators.pfga", "mode", "hybrid");
+        ctx.set_subkey("operators.pfga", "validation_layer", "null_noise_floor");
+        ctx.set_subkey(
+            "operators.pfga",
+            "capture_policy",
+            "resample_working_master_final",
+        );
+        Ok(())
+    }
+}
+
+#[derive(Default)]
 pub struct BassGoBrrrOperator;
 
 impl SubOperator for BassGoBrrrOperator {
@@ -198,6 +227,7 @@ mod tests {
         suite.register(StereoscopeOperator).unwrap();
         suite.register(FrequencyGateOperator).unwrap();
         suite.register(BassGoBrrrOperator).unwrap();
+        suite.register(PFGAOperator).unwrap();
 
         let mut ctx = PluginContext::new();
         suite.run_all(&mut ctx).unwrap();
@@ -217,6 +247,16 @@ mod tests {
         assert_eq!(
             ctx.get_subkey("operators.bass_go_brrr", "enabled"),
             Some("true")
+        );
+        assert_eq!(ctx.get_subkey("operators.pfga", "enabled"), Some("true"));
+        assert_eq!(ctx.get_subkey("operators.pfga", "mode"), Some("hybrid"));
+        assert_eq!(
+            ctx.get_subkey("operators.pfga", "validation_layer"),
+            Some("null_noise_floor")
+        );
+        assert_eq!(
+            ctx.get_subkey("operators.pfga", "capture_policy"),
+            Some("resample_working_master_final")
         );
     }
 }

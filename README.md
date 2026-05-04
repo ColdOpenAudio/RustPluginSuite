@@ -60,3 +60,18 @@ A complete Windows installer wrapper is available for one-command setup, validat
 - `scripts\install-windows.ps1` (full installer)
 
 See `docs/windows-auto-install.md` for full usage and operational details.
+
+## PFGA (Pitch/Frequency Gate Amp) System Spec
+
+The combined **Pitch/Frequency Gate Amp (PFGA)** architecture and validation protocol are documented in `docs/pfga-spec.md`.
+
+This spec unifies:
+
+- Frequency Gate behavior
+- Pitch Gate Amp behavior
+- Null/Noise-Floor validation
+
+And it locks the capture workflow to:
+
+- **Resample print as working truth**
+- **Master export as final confirmation only**
