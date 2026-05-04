@@ -73,6 +73,11 @@ A complete Windows installer wrapper is available for one-command setup, validat
 
 See `docs/windows-auto-install.md` for full usage and operational details.
 
+## Git + Rust Command Sheets
+
+- `docs/command-sheets/git-commands.md`
+- `docs/command-sheets/rust-install-commands.md`
+
 ## PFGA (Pitch/Frequency Gate Amp) System Spec
 
 The combined **Pitch/Frequency Gate Amp (PFGA)** architecture and validation protocol are documented in `docs/pfga-spec.md`.
