@@ -60,27 +60,3 @@ A complete Windows installer wrapper is available for one-command setup, validat
 - `scripts\install-windows.ps1` (full installer)
 
 See `docs/windows-auto-install.md` for full usage and operational details.
-
-
-## GitHub First Release Package
-
-This repository now ships a tag-driven GitHub release workflow:
-
-- Workflow: `.github/workflows/release.yml`
-- Local/CI packager: `scripts/release/package-release.sh`
-- Release notes template: `.github/release/release-notes-template.md`
-
-To cut the first release:
-
-```bash
-cargo fmt -- --check
-cargo test
-git tag v0.1.0
-git push origin v0.1.0
-```
-
-The workflow will publish:
-
-- `rust-plugin-suite-<version>.zip`
-- `rust-plugin-suite-<version>.tar.gz`
-- `rust-plugin-suite-<version>-SHA256SUMS.txt`

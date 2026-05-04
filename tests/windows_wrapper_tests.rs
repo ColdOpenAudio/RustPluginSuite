@@ -5,9 +5,9 @@ fn powershell_installer_contains_required_quality_gates() {
     let script = fs::read_to_string("scripts/install-windows.ps1")
         .expect("expected scripts/install-windows.ps1 to exist");
 
-    assert!(script.contains("Invoke-Cargo \"fmt -- --check\""));
-    assert!(script.contains("Invoke-Cargo \"test\""));
-    assert!(script.contains("Invoke-Cargo \"build --release\""));
+    assert!(script.contains("cargo fmt -- --check"));
+    assert!(script.contains("cargo test"));
+    assert!(script.contains("cargo build --release"));
 }
 
 #[test]
