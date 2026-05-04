@@ -2,8 +2,13 @@ name: release
 
 on:
   push:
+    branches:
+      - main
     tags:
       - 'v*'
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
 
 permissions:
@@ -22,7 +27,7 @@ jobs:
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
         with:
-          components: clippy
+          components: rustfmt, clippy
       - name: Format check
         run: cargo fmt --all -- --check
       - name: Lint
@@ -36,8 +41,14 @@ jobs:
     needs: test
     steps:
       - uses: actions/checkout@v4
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
       - name: Build release bundle
         run: bash scripts/release/package-release.sh
+      - name: Verify release bundle source
+        run: cargo test --manifest-path dist/rust-plugin-suite-0.1.0/Cargo.toml --all-targets --all-features
       - name: Upload workflow artifacts
         uses: actions/upload-artifact@v4
         with:

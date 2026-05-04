@@ -32,6 +32,25 @@ cp "$ROOT_DIR/scripts/install-windows-bootstrap.ps1" "$WINDOWS_SUBDIR/"
 cp "$ROOT_DIR/scripts/install-windows.ps1" "$WINDOWS_SUBDIR/"
 cp "$ROOT_DIR/scripts/install-windows.bat" "$WINDOWS_SUBDIR/"
 
+required_paths=(
+  "$BUNDLE_ROOT/Cargo.toml"
+  "$BUNDLE_ROOT/Cargo.lock"
+  "$BUNDLE_ROOT/src/lib.rs"
+  "$BUNDLE_ROOT/tests/windows_wrapper_tests.rs"
+  "$BUNDLE_ROOT/scripts/setup/install-git-windows.ps1"
+  "$BUNDLE_ROOT/scripts/setup/install-rust-windows.ps1"
+  "$WINDOWS_SUBDIR/install-windows-bootstrap.ps1"
+  "$WINDOWS_SUBDIR/install-windows.ps1"
+  "$WINDOWS_SUBDIR/install-windows.bat"
+)
+
+for required_path in "${required_paths[@]}"; do
+  if [[ ! -e "$required_path" ]]; then
+    echo "ERROR: release bundle missing required path: $required_path" >&2
+    exit 1
+  fi
+done
+
 cat > "$BUNDLE_ROOT/RELEASE-MANIFEST.txt" <<EOF
 Package: ${PKG_NAME}
 Version: ${VERSION}
