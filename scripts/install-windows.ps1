@@ -74,12 +74,13 @@ $repoRoot = Resolve-Path (Join-Path $scriptRoot "..")
 Set-Location $repoRoot
 
 Write-Section "Running quality gates"
-Invoke-Cargo "fmt -- --check"
-Invoke-Cargo "test"
+Invoke-Cargo "fmt --all -- --check"
+Invoke-Cargo "clippy --all-targets --all-features -- -D warnings"
+Invoke-Cargo "test --all-targets --all-features"
 
 if (-not $SkipBuild) {
     Write-Section "Building release"
-    Invoke-Cargo "build --release"
+    Invoke-Cargo "build --release --all-targets"
 }
 
 Write-Section "Deploying artifacts"
